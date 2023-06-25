@@ -1,5 +1,3 @@
-import requests
-import aiohttp
 from dataclasses import dataclass, field
 from functools import lru_cache
 from src import client_session
@@ -21,5 +19,6 @@ class ExchangeRatesHandler:
 
     @classmethod
     @property
+    @lru_cache
     def usd(cls):
         return cls.exchange_rates.get("rates", {}).get("usd")

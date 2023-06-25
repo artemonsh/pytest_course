@@ -1,8 +1,10 @@
-from typing import Literal
 from pydantic import BaseSettings
+import os
 
 
 class Settings(BaseSettings):
+    MODE: str
+    
     DB_HOST: str
     DB_PORT: int
     DB_USER: str
@@ -14,7 +16,7 @@ class Settings(BaseSettings):
         return f"postgresql+psycopg2://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
     class Config:
-        env_file = ".env"
+        env_file = ".env" if os.environ.get("MODE") != "TEST" else ".env-test"
+
 
 settings = Settings()
-settings_test = Settings(_env_file=".env-test")

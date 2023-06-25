@@ -1,35 +1,36 @@
 import pytest
-import os
-from src.config import settings
+import sys
+from pathlib import Path
 
-os.environ["MODE"] = "TEST"
-print(os.environ.get("MODE"), "WOHO")
-print(settings.DB_NAME)
+sys.path.append(str(Path(__file__).parent.parent))
+
+from src.candies.service import CandiesService
+from src.candies.schemas import CandySchema
+from src.db import Base, engine
 
 
-@pytest.fixture(scope="session", autouse=True)
-def print_db():
-    print(settings.DB_NAME)
-    print("A".center(60, "="))
 
-# @pytest.fixture(scope="session")
-# def session_cards_db():
-#     """CardsDB"""
-#     Base.metadata.create_all(bind=engine)
-#     yield
-#     Base.metadata.drop_all(bind=engine)
+# @pytest.fixture(autouse=True)
+# def setup_db():
+#     Base.metadata.drop_all(engine)
+#     Base.metadata.create_all(engine)
+#     print("CREATED DB")
+
+
+@pytest.fixture(scope='session', autouse=True)
+def faker_session_locale():
+    return ['ru_RU']
 
 
 # @pytest.fixture(scope="function")
-# def cards_db(session_cards_db, request, faker):
-#     db = session_cards_db
-#     db.delete_all()
-#     # support for `@pytest.mark.num_cards(<some number>)`
+# def fake_candies(request, faker):
+#     CandiesService.delete_all()
+#     # support for `@pytest.mark.num_candies(<some number>)`
 #     faker.seed_instance(101) # random seed
-#     m = request.node.get_closest_marker('num_cards')
+#     m = request.node.get_closest_marker('num_candies')
 #     if m and len(m.args) > 0:
-#         num_cards = m.args[0]
-#         for _ in range(num_cards):
-#             db.add_card(Card(summary=faker.sentence(),
-#                              owner=faker.first_name()))
-#     return db
+#         num_candies = m.args[0]
+#         for _ in range(num_candies):
+#             CandiesService.add(CandySchema(title=faker.first_name(),
+#                             kid=faker.first_name()))
+#     return CandiesService

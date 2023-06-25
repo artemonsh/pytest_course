@@ -17,6 +17,3 @@
 # @pytest.mark.num_cards(3)
 # def test_count_three_cards(cards_db):
 #     assert cards_db.count() == 3
-
-def test_abc():
-    assert 2 == 2

@@ -1,28 +1,17 @@
-from sqlalchemy import delete, func, insert, literal_column, select, update
-from db import Session
+from sqlalchemy import delete, func, insert, select, update
+from src.db import Session
 
-from candies.models import Candies
-from candies.api import Candy
+from src.candies.models import Candies
 
 
-class CandiesDB:
-    # @classmethod
-    # def add(cls, candy: Candy):
-    #     with Session() as session:
-    #         stmt = insert(Candies).values(**candy.to_dict_wo_id()).returning(Candies.id)
-    #         candy = session.execute(stmt)
-    #         session.commit()
-    #         candy = candy.scalar_one()
-    #     return Candy.from_orm(candy)
-    
+class CandiesRepository:
     @classmethod
-    def add(cls, candy: Candy):
+    def add(cls, values: dict):
         with Session() as session:
-            stmt = insert(Candies).values(**candy.to_dict_wo_id()).returning(Candies)
+            stmt = insert(Candies).values(**values).returning(Candies)
             new_candy = session.execute(stmt)
             session.commit()
-            new_candy = new_candy.mappings().one()["Candies"]
-        return Candy.from_orm(new_candy)
+            return new_candy.scalar_one()
         
     @classmethod
     def get(cls, candy_id: int):
@@ -30,22 +19,15 @@ class CandiesDB:
         with Session() as session:
             candy = session.execute(query)
             session.commit()
-            candy = candy.mappings().one()
-        return Candy.from_dict(candy)
+            return candy.mappings().one()
 
     @classmethod
-    def list(cls, location=None, price=0):
-        filter_by = {}
-        if location:
-            filter_by |= {"location": location}
-        if price:
-            filter_by |= {"price": price}
+    def list(cls, filter_by: dict):
         query = select(Candies).filter_by(**filter_by)
         with Session() as session:
             candies = session.execute(query)
             session.commit()
-            candy = candies.mappings().all()
-        return Candy.from_dict(candy)
+            return candies.scalars().all()
 
     @classmethod
     def count(cls) -> int:
@@ -53,18 +35,18 @@ class CandiesDB:
         with Session() as session:
             candies_count = session.execute(query)
             session.commit()
-        return candies_count.scalar()
+            return candies_count.scalar()
 
     @classmethod
-    def update(cls, candy_id: int, candy: Candy):
-        stmt = update(Candies).where(Candies.id == candy_id).values(**candy.to_dict_wo_id())
+    def update(cls, candy_id: int, values: dict):
+        stmt = update(Candies).where(Candies.id == candy_id).values(**values)
         with Session() as session:
             session.execute(stmt)
             session.commit()
 
     @classmethod
-    def finish(cls, candy_id: int):
-        stmt = update(Candies).where(Candies.id == candy_id).values(is_passed=True)
+    def finish(cls, candy_id: int, values: dict):
+        stmt = update(Candies).where(Candies.id == candy_id).values(**values)
         with Session() as session:
             session.execute(stmt)
             session.commit()

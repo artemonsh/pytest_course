@@ -1,13 +1,25 @@
-from events.repository import EventsDB
-from events.api import Event
-from db import Base, engine
+import sys
+from pathlib import Path
 
-Base.metadata.drop_all(engine)
-Base.metadata.create_all(engine)
+sys.path.append(str(Path(__file__).parent.parent))
+
+from src.candies.repository import CandiesRepository
+from src.candies.schemas import CandySchema
+from src.db import Base, engine
+
+from src.candies.service import CandiesService
+# Base.metadata.drop_all(engine)
+# Base.metadata.create_all(engine)
 
 
-print(" Events ".center(60, "="))
+print(" Candies ".center(80, "="))
 
-event_1 = Event(title="IT Конференция")
-event_added = EventsDB.add(event_1)
-print(f"{event_added=}")
+candy_1 = CandySchema(title="Конфета Рига", kid="Бук")
+added_candy = CandiesService.add(candy_1)
+all = CandiesService.list()
+first = CandiesService.get(36)
+print(f"{added_candy=}")
+print()
+print(f"{all=}")
+print()
+print(f"{first=}")
