@@ -5,9 +5,13 @@ from src.candies.service import CandiesService
 from src.db import Base, engine
 from src.candies.models import Candies
 
+from src.config import settings
+
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_db():
+    print(f"{settings.DB_NAME=}")
+    assert settings.MODE == "TEST"
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
 
