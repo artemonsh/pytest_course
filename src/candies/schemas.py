@@ -9,7 +9,7 @@ class CandySchema(BaseModel):
     owner: str = Field(default="teacher")
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
     def __eq__(self, other):
         if not isinstance(other, type(self)):
