@@ -20,4 +20,4 @@ class CandySchema(BaseModel):
         return True
         
     def to_dict_wo_id(self) -> dict:
-        return self.dict(exclude={"id"})
+        return self.model_dump(exclude={"id"})

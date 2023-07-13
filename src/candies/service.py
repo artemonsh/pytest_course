@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import parse_obj_as
+from pydantic import TypeAdapter
 from src.candies.repository import CandiesRepository
 from src.candies.schemas import CandySchema
 
@@ -9,12 +9,12 @@ class CandiesService:
     def add(cls, candy: CandySchema):
         candy_dict = candy.to_dict_wo_id()
         new_candy = CandiesRepository.add(candy_dict)
-        return parse_obj_as(CandySchema, new_candy)
+        return TypeAdapter(CandySchema).dump_python(new_candy)
     
     @classmethod
     def get(cls, candy_id: int):
         candy = CandiesRepository.get(candy_id)
-        return parse_obj_as(CandySchema, candy)
+        return TypeAdapter(CandySchema).dump_python(candy)
 
     @classmethod
     def list(
@@ -25,7 +25,7 @@ class CandiesService:
     ):
         filter_by = {k: v for k, v in {"title": title, "state": state, "owner": owner}.items() if v}
         candies = CandiesRepository.list(filter_by)
-        return parse_obj_as(list[CandySchema], candies)
+        return TypeAdapter(list[CandySchema]).dump_python(candies)
 
     @classmethod
     def count(cls) -> int:
