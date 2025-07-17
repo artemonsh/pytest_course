@@ -21,7 +21,7 @@ def upgrade() -> None:
         sa.Column('title', sa.String(length=200), nullable=True),
         sa.Column('price', sa.Integer(), nullable=True),
         sa.Column('state', sa.String(length=20), server_default='full', nullable=True),
-        sa.Column('kid', sa.String(length=100), nullable=False),
+        sa.Column('owner', sa.String(length=100), nullable=False),
         sa.PrimaryKeyConstraint('id')
     )
 

@@ -8,8 +8,7 @@ class CandySchema(BaseModel):
     state: str = Field(default="full")
     owner: str = Field(default="teacher")
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
     def __eq__(self, other):
         if not isinstance(other, type(self)):

@@ -1,5 +1,6 @@
 from typing import Optional
 from pydantic import TypeAdapter
+import sqlalchemy.exc
 from src.candies.repository import CandiesRepository
 from src.candies.schemas import CandySchema
 
@@ -11,10 +12,13 @@ class CandiesService:
         new_candy = CandiesRepository.add(candy_dict)
         return TypeAdapter(CandySchema).dump_python(new_candy)
     
-    @classmethod
+    @classmethod    
     def get(cls, candy_id: int):
-        candy = CandiesRepository.get(candy_id)
-        return TypeAdapter(CandySchema).dump_python(candy)
+        try:
+            candy = CandiesRepository.get(candy_id)
+            return TypeAdapter(CandySchema).dump_python(candy)
+        except sqlalchemy.exc.NoResultFound:
+            return None
 
     @classmethod
     def list(
